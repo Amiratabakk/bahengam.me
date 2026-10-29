@@ -1,0 +1,273 @@
+/* ============================================================
+   Apple-inspired Glassmorphism Design
+   Amiratabak Bahengam — bahengam.me
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* ---- Tokens ---- */
+:root {
+  --glass-bg:      rgba(255, 255, 255, 0.07);
+  --glass-border:  rgba(255, 255, 255, 0.13);
+  --glass-shadow:  0 8px 40px rgba(0, 0, 0, 0.35);
+  --blur:          blur(24px) saturate(160%);
+  --bg-1:          #07121f;
+  --bg-2:          #0d1f3c;
+  --bg-3:          #0e2444;
+  --accent:        #4facfe;
+  --accent-2:      #00e0fe;
+  --text-hi:       rgba(255, 255, 255, 0.95);
+  --text-mid:      rgba(255, 255, 255, 0.68);
+  --text-lo:       rgba(255, 255, 255, 0.40);
+  --radius-lg:     22px;
+  --radius-md:     14px;
+  --radius-sm:     10px;
+}
+
+/* ---- Body & background ---- */
+html { scroll-behavior: smooth; }
+
+body {
+  background: linear-gradient(140deg, var(--bg-1) 0%, var(--bg-2) 45%, var(--bg-3) 75%, var(--bg-1) 100%) fixed !important;
+  font-family: 'Inter', -apple-system, 'SF Pro Display', BlinkMacSystemFont, sans-serif !important;
+  color: var(--text-hi) !important;
+  min-height: 100vh;
+}
+
+/* subtle animated grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ---- Sidebar / Navbar ---- */
+#sideNav {
+  background: rgba(7, 18, 31, 0.72) !important;
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border-right: 1px solid var(--glass-border) !important;
+  box-shadow: 6px 0 40px rgba(0, 0, 0, 0.5);
+}
+
+.img-profile {
+  border: 2px solid rgba(255, 255, 255, 0.18) !important;
+  box-shadow: 0 0 35px rgba(79, 172, 254, 0.25), 0 0 80px rgba(79, 172, 254, 0.08);
+  transition: box-shadow 0.4s ease;
+}
+.img-profile:hover {
+  box-shadow: 0 0 50px rgba(79, 172, 254, 0.45), 0 0 100px rgba(79, 172, 254, 0.15);
+}
+
+.navbar-nav .nav-link {
+  color: rgba(255, 255, 255, 0.65) !important;
+  font-size: 0.72rem !important;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+  padding: 0.45rem 1rem !important;
+  margin: 2px 0;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link.active {
+  color: #fff !important;
+  background: rgba(255, 255, 255, 0.09);
+}
+
+/* ---- Content sections — glass cards ---- */
+.container-fluid.p-0 {
+  position: relative;
+  z-index: 1;
+}
+
+.resume-section {
+  background: var(--glass-bg) !important;
+  backdrop-filter: var(--blur);
+  -webkit-backdrop-filter: var(--blur);
+  border: 1px solid var(--glass-border) !important;
+  border-radius: var(--radius-lg) !important;
+  margin: 1.4rem 1.6rem !important;
+  box-shadow: var(--glass-shadow) !important;
+  transition: box-shadow 0.35s ease, transform 0.35s ease;
+}
+.resume-section:hover {
+  box-shadow: 0 14px 56px rgba(0, 0, 0, 0.45) !important;
+  transform: translateY(-2px);
+}
+
+hr.m-0 {
+  display: none !important;   /* separators replaced by card spacing */
+}
+
+/* ---- Typography ---- */
+h1, h2, h3, h4 {
+  font-family: 'Inter', sans-serif !important;
+}
+
+.resume-section h1 {
+  font-size: 2.8rem !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  color: var(--text-hi) !important;
+}
+
+.resume-section h1 .text-primary {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.resume-section h2 {
+  color: var(--text-hi) !important;
+  font-size: 1.65rem !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.resume-section h3 {
+  color: var(--text-hi) !important;
+  font-size: 1.08rem !important;
+  font-weight: 600 !important;
+}
+
+.subheading {
+  color: rgba(79, 172, 254, 0.85) !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.09em !important;
+  text-transform: uppercase !important;
+}
+
+/* ---- Body copy ---- */
+.resume-section p,
+.resume-section li,
+.resume-section ol li {
+  color: var(--text-mid) !important;
+  line-height: 1.78 !important;
+  font-weight: 400;
+}
+
+.resume-section .lead {
+  color: rgba(255, 255, 255, 0.82) !important;
+  font-size: 1.04rem !important;
+  font-weight: 400 !important;
+  line-height: 1.82 !important;
+}
+
+/* ---- Links ---- */
+.resume-section a,
+.resume-section a:visited {
+  color: rgba(79, 172, 254, 0.88) !important;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.resume-section a:hover {
+  color: var(--accent-2) !important;
+}
+
+/* ---- Date / accent text ---- */
+.text-primary {
+  color: rgba(79, 172, 254, 0.82) !important;
+}
+.text-muted {
+  color: var(--text-lo) !important;
+}
+
+/* ---- Social icons ---- */
+.social-icons a.social-icon {
+  background: rgba(255, 255, 255, 0.07) !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  color: rgba(255, 255, 255, 0.80) !important;
+  border-radius: 50% !important;
+  width: 44px !important;
+  height: 44px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 8px !important;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-decoration: none !important;
+}
+.social-icons a.social-icon:hover {
+  background: rgba(79, 172, 254, 0.18) !important;
+  border-color: rgba(79, 172, 254, 0.45) !important;
+  color: #fff !important;
+  transform: translateY(-3px) scale(1.08);
+  box-shadow: 0 10px 24px rgba(79, 172, 254, 0.28);
+}
+
+/* ---- Download CV button ---- */
+.btn-primary {
+  background: linear-gradient(135deg, rgba(79,172,254,0.22), rgba(0,226,254,0.14)) !important;
+  border: 1px solid rgba(79, 172, 254, 0.38) !important;
+  color: #fff !important;
+  backdrop-filter: blur(12px);
+  border-radius: var(--radius-md) !important;
+  font-weight: 500 !important;
+  font-size: 0.88rem !important;
+  letter-spacing: 0.02em !important;
+  padding: 0.52rem 1.25rem !important;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 4px 18px rgba(79, 172, 254, 0.18);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, rgba(79,172,254,0.38), rgba(0,226,254,0.25)) !important;
+  border-color: rgba(79, 172, 254, 0.65) !important;
+  color: #fff !important;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 10px 30px rgba(79, 172, 254, 0.32);
+}
+
+/* ---- Icon lists (skills / awards) ---- */
+.fa-ul .fa-li i {
+  color: rgba(79, 172, 254, 0.75) !important;
+}
+.fa-ul li {
+  color: var(--text-mid) !important;
+  margin-bottom: 0.6rem;
+}
+
+/* trophies / certificates keep amber */
+.fa-trophy.text-warning,
+.fa-certificate.text-warning {
+  color: rgba(255, 205, 80, 0.85) !important;
+}
+
+/* dev skill icons */
+.list-inline.dev-icons .list-inline-item i {
+  color: rgba(255,255,255,0.55) !important;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.list-inline.dev-icons .list-inline-item i:hover {
+  color: var(--accent) !important;
+  transform: scale(1.15);
+}
+
+/* ---- Scrollbar ---- */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+
+/* ---- Mobile ---- */
+@media (max-width: 991.98px) {
+  .resume-section {
+    margin: 0.75rem 0.75rem !important;
+    border-radius: var(--radius-md) !important;
+  }
+  #sideNav {
+    border-right: none !important;
+    border-bottom: 1px solid var(--glass-border) !important;
+  }
+  body {
+    background-attachment: scroll !important;
+  }
+}
