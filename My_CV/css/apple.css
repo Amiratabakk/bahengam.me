@@ -203,15 +203,24 @@ body::after {
   line-height: 1.1 !important;
 }
 
-/* Gradient accent on name */
+/* Name — both first and last name pure white */
 .resume-section h1 .text-primary,
 h1.text-primary,
+#sideNav .navbar-brand .text-primary {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  color: #ffffff !important;
+}
+
+/* .text-primary elsewhere (section labels, dates) — keep accent blue */
 .text-primary {
-  background: linear-gradient(135deg, var(--accent-a) 0%, var(--accent-b) 100%) !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  -webkit-text-fill-color: transparent !important;
-  color: transparent !important;
+  color: var(--accent-a) !important;
+  -webkit-text-fill-color: var(--accent-a) !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
 }
 
 /* Headings */
@@ -343,19 +352,51 @@ h1.text-primary,
   color: rgba(255,255,255,0.42) !important;
 }
 .flex-shrink-0 span {
-  background: rgba(79,172,254,0.12) !important;
-  color: var(--accent-a) !important;
-  border: 1px solid rgba(79,172,254,0.25) !important;
+  /* Frosted glass with warm amber — clearly distinct from navy background */
+  background: rgba(255, 210, 120, 0.14) !important;
+  color: #ffd47a !important;
+  -webkit-text-fill-color: #ffd47a !important;
+  border: 1px solid rgba(255, 210, 120, 0.35) !important;
   border-radius: 100px !important;
-  padding: 3px 12px !important;
-  font-size: 0.84rem !important;
+  padding: 4px 14px !important;
+  font-size: 0.83rem !important;
   font-weight: 600 !important;
-  letter-spacing: 0.01em !important;
+  letter-spacing: 0.02em !important;
   white-space: nowrap !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.12) !important;
 }
 
+
+/* ── Links — match body text color ─────────────────────────── */
+a,
+a:visited,
+a:hover,
+a:focus,
+.resume-section a,
+.resume-section a:hover {
+  color: rgba(255,255,255,0.82) !important;
+  text-decoration: none !important;
+  -webkit-text-fill-color: rgba(255,255,255,0.82) !important;
+  transition: color 0.2s ease, opacity 0.2s ease !important;
+}
+a:hover,
+.resume-section a:hover {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+}
+/* Exception: keep social icons styled by their own rules */
+.social-icons a,
+.social-icons a:hover {
+  color: rgba(255,255,255,0.75) !important;
+  -webkit-text-fill-color: rgba(255,255,255,0.75) !important;
+}
+.social-icons a:hover {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
 /* ── Scrollbar ──────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
