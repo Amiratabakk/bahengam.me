@@ -201,6 +201,8 @@ body::after {
   font-weight: 700 !important;
   letter-spacing: -0.03em !important;
   line-height: 1.1 !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
 }
 
 /* Name — both first and last name pure white */
@@ -352,11 +354,11 @@ h1.text-primary,
   color: rgba(255,255,255,0.42) !important;
 }
 .flex-shrink-0 span {
-  /* Frosted glass with warm amber — clearly distinct from navy background */
-  background: rgba(255, 210, 120, 0.14) !important;
-  color: #ffd47a !important;
-  -webkit-text-fill-color: #ffd47a !important;
-  border: 1px solid rgba(255, 210, 120, 0.35) !important;
+  /* Glass pill — text matches body color */
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255,255,255,0.78) !important;
+  -webkit-text-fill-color: rgba(255,255,255,0.78) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
   border-radius: 100px !important;
   padding: 4px 14px !important;
   font-size: 0.83rem !important;
@@ -377,15 +379,17 @@ a:focus,
 .resume-section a,
 .resume-section a:hover {
   color: rgba(255,255,255,0.82) !important;
-  text-decoration: none !important;
+  text-decoration: underline !important;
+  text-underline-offset: 3px !important;
+  text-decoration-color: rgba(255,255,255,0.30) !important;
   -webkit-text-fill-color: rgba(255,255,255,0.82) !important;
-  transition: color 0.2s ease, opacity 0.2s ease !important;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease !important;
 }
 a:hover,
 .resume-section a:hover {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
-  opacity: 1 !important;
+  text-decoration-color: rgba(255,255,255,0.70) !important;
 }
 /* Exception: keep social icons styled by their own rules */
 .social-icons a,
@@ -396,6 +400,13 @@ a:hover,
 .social-icons a:hover {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
+}
+/* No underline on nav, social icons, buttons */
+#sideNav .nav-link,
+.social-icons a,
+.btn,
+.navbar-brand {
+  text-decoration: none !important;
 }
 /* ── Scrollbar ──────────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }
