@@ -1,273 +1,381 @@
 /* ============================================================
-   Apple-inspired Glassmorphism Design
-   Amiratabak Bahengam — bahengam.me
+   LIQUID GLASS — Apple-authentic implementation
+   Based on iOS 26 / macOS 26 Liquid Glass design system
+   WWDC 2025: refraction + specular + vibrancy + lens curvature
    ============================================================ */
 
+/* ── Inter font ─────────────────────────────────────────────── */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* ---- Tokens ---- */
+/* ── Design tokens ──────────────────────────────────────────── */
 :root {
-  --glass-bg:      rgba(255, 255, 255, 0.07);
-  --glass-border:  rgba(255, 255, 255, 0.13);
-  --glass-shadow:  0 8px 40px rgba(0, 0, 0, 0.35);
-  --blur:          blur(24px) saturate(160%);
-  --bg-1:          #07121f;
-  --bg-2:          #0d1f3c;
-  --bg-3:          #0e2444;
-  --accent:        #4facfe;
-  --accent-2:      #00e0fe;
-  --text-hi:       rgba(255, 255, 255, 0.95);
-  --text-mid:      rgba(255, 255, 255, 0.68);
-  --text-lo:       rgba(255, 255, 255, 0.40);
-  --radius-lg:     22px;
-  --radius-md:     14px;
-  --radius-sm:     10px;
+  /* Accent — keep the blue the user wants */
+  --accent-a: #4facfe;
+  --accent-b: #00e0fe;
+
+  /* Background layers */
+  --bg-base:  #07121f;
+  --bg-mid:   #0d1f3c;
+  --bg-top:   #0e2444;
+
+  /* Liquid Glass — core */
+  --lg-blur:        blur(48px) saturate(220%) brightness(1.12);
+  --lg-tint:        rgba(210, 230, 255, 0.055);   /* almost-clear blue-white */
+  --lg-tint-nav:    rgba(7, 18, 31, 0.60);         /* sidebar — darker */
+
+  /* Specular rim — the key Liquid Glass signature */
+  --spec-top:       rgba(255, 255, 255, 0.55);
+  --spec-bottom:    rgba(0, 0, 0, 0.18);
+  --spec-side:      rgba(255, 255, 255, 0.22);
+
+  /* Depth shadows */
+  --shadow-lg: 0 24px 64px rgba(0,0,0,0.55), 0 4px 16px rgba(0,0,0,0.35);
+  --shadow-sm: 0 8px 32px rgba(0,0,0,0.40), 0 2px 8px rgba(0,0,0,0.25);
+
+  /* Radius */
+  --r-xl: 28px;
+  --r-lg: 20px;
+  --r-md: 14px;
+  --r-sm: 10px;
 }
 
-/* ---- Body & background ---- */
-html { scroll-behavior: smooth; }
-
-body {
-  background: linear-gradient(140deg, var(--bg-1) 0%, var(--bg-2) 45%, var(--bg-3) 75%, var(--bg-1) 100%) fixed !important;
-  font-family: 'Inter', -apple-system, 'SF Pro Display', BlinkMacSystemFont, sans-serif !important;
-  color: var(--text-hi) !important;
-  min-height: 100vh;
-}
-
-/* subtle animated grain overlay */
+/* ── SVG Refraction filter definition ──────────────────────── */
+/* Injected as inline SVG — referenced below via filter: url() */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Hidden SVG filter for refraction displacement */
+.lg-filter-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+/* ── Page background ────────────────────────────────────────── */
+body {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(79,172,254,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 90%, rgba(0,224,254,0.06) 0%, transparent 60%),
+    linear-gradient(150deg, var(--bg-base) 0%, var(--bg-mid) 40%, var(--bg-top) 70%, var(--bg-base) 100%)
+    fixed !important;
+  font-family: 'Inter', -apple-system, 'SF Pro Display', BlinkMacSystemFont, 'Helvetica Neue', sans-serif !important;
+  color: rgba(255,255,255,0.88) !important;
+  min-height: 100vh;
+}
+
+/* ── Grain texture overlay (Apple uses ultra-fine noise) ────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.4;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
 }
 
-/* ---- Sidebar / Navbar ---- */
+/* ── Sidebar — Liquid Glass nav ─────────────────────────────── */
 #sideNav {
-  background: rgba(7, 18, 31, 0.72) !important;
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border-right: 1px solid var(--glass-border) !important;
-  box-shadow: 6px 0 40px rgba(0, 0, 0, 0.5);
+  background: var(--lg-tint-nav) !important;
+  backdrop-filter: var(--lg-blur) !important;
+  -webkit-backdrop-filter: var(--lg-blur) !important;
+
+  /* Specular rim — right edge only for sidebar */
+  border-right: 1px solid rgba(255,255,255,0.18) !important;
+  box-shadow:
+    inset -1px 0 0 rgba(255,255,255,0.08),   /* inner right highlight */
+    4px 0 40px rgba(0,0,0,0.45) !important;
 }
 
-.img-profile {
-  border: 2px solid rgba(255, 255, 255, 0.18) !important;
-  box-shadow: 0 0 35px rgba(79, 172, 254, 0.25), 0 0 80px rgba(79, 172, 254, 0.08);
-  transition: box-shadow 0.4s ease;
+/* Nav brand image — keep circular with glass ring */
+#sideNav .navbar-brand img {
+  border: 2px solid rgba(255,255,255,0.20) !important;
+  box-shadow:
+    0 0 0 4px rgba(79,172,254,0.10),
+    0 8px 24px rgba(0,0,0,0.50) !important;
+  transition: box-shadow 0.4s ease !important;
 }
-.img-profile:hover {
-  box-shadow: 0 0 50px rgba(79, 172, 254, 0.45), 0 0 100px rgba(79, 172, 254, 0.15);
-}
-
-.navbar-nav .nav-link {
-  color: rgba(255, 255, 255, 0.65) !important;
-  font-size: 0.72rem !important;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  border-radius: var(--radius-sm);
-  padding: 0.45rem 1rem !important;
-  margin: 2px 0;
-  transition: background 0.25s ease, color 0.25s ease;
-}
-.navbar-nav .nav-link:hover,
-.navbar-nav .nav-link.active {
-  color: #fff !important;
-  background: rgba(255, 255, 255, 0.09);
+#sideNav .navbar-brand img:hover {
+  box-shadow:
+    0 0 0 5px rgba(79,172,254,0.22),
+    0 12px 32px rgba(0,0,0,0.60) !important;
 }
 
-/* ---- Content sections — glass cards ---- */
-.container-fluid.p-0 {
-  position: relative;
-  z-index: 1;
+/* Nav links */
+#sideNav .nav-link {
+  color: rgba(255,255,255,0.72) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.02em !important;
+  transition: color 0.2s ease, background 0.2s ease !important;
+  border-radius: var(--r-sm) !important;
+  margin: 2px 8px !important;
+  padding: 8px 12px !important;
+}
+#sideNav .nav-link:hover,
+#sideNav .nav-link.active {
+  color: rgba(255,255,255,0.96) !important;
+  background: rgba(255,255,255,0.08) !important;
+}
+#sideNav .navbar-brand .name {
+  color: rgba(255,255,255,0.95) !important;
 }
 
+/* ── Liquid Glass mixin — content sections ──────────────────── */
 .resume-section {
-  background: var(--glass-bg) !important;
-  backdrop-filter: var(--blur);
-  -webkit-backdrop-filter: var(--blur);
-  border: 1px solid var(--glass-border) !important;
-  border-radius: var(--radius-lg) !important;
-  margin: 1.4rem 1.6rem !important;
-  box-shadow: var(--glass-shadow) !important;
-  transition: box-shadow 0.35s ease, transform 0.35s ease;
+  position: relative !important;
+  background: var(--lg-tint) !important;
+  backdrop-filter: var(--lg-blur) !important;
+  -webkit-backdrop-filter: var(--lg-blur) !important;
+
+  border-radius: var(--r-xl) !important;
+  margin: 1.6rem 2rem !important;
+  padding: 2.8rem 3rem !important;
+
+  /* Depth shadows */
+  box-shadow: var(--shadow-lg) !important;
+
+  /* Specular rim — the Liquid Glass signature */
+  border: 1px solid transparent !important;
+  background-clip: padding-box !important;
+
+  /* Overflow needed for pseudo-element rim */
+  overflow: visible !important;
+
+  transition: transform 0.38s cubic-bezier(0.34,1.56,0.64,1),
+              box-shadow 0.38s ease !important;
 }
+
+/* Liquid Glass specular rim via ::before */
+.resume-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--r-xl);
+  pointer-events: none;
+  z-index: 1;
+
+  /* Directional rim: bright top-left, subtle bottom-right — real glass optics */
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.22) 0%,
+    rgba(255,255,255,0.06) 25%,
+    rgba(255,255,255,0.00) 50%,
+    rgba(0,0,0,0.05) 75%,
+    rgba(0,0,0,0.12) 100%
+  );
+  border-radius: inherit;
+}
+
+/* Lens curvature highlight — the "curved glass" illusion ::after */
+.resume-section::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 45%;
+  border-radius: var(--r-xl) var(--r-xl) 60% 60% / var(--r-xl) var(--r-xl) 40px 40px;
+  pointer-events: none;
+  z-index: 2;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.09) 0%,
+    rgba(255,255,255,0.03) 50%,
+    rgba(255,255,255,0.00) 100%
+  );
+}
+
 .resume-section:hover {
-  box-shadow: 0 14px 56px rgba(0, 0, 0, 0.45) !important;
-  transform: translateY(-2px);
+  transform: translateY(-3px) scale(1.003) !important;
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.60),
+    0 6px 20px rgba(0,0,0,0.40) !important;
 }
 
-hr.m-0 {
-  display: none !important;   /* separators replaced by card spacing */
-}
-
-/* ---- Typography ---- */
-h1, h2, h3, h4 {
-  font-family: 'Inter', sans-serif !important;
-}
-
+/* ── Typography ─────────────────────────────────────────────── */
 .resume-section h1 {
-  font-size: 2.8rem !important;
   font-weight: 700 !important;
-  letter-spacing: -0.025em !important;
-  color: var(--text-hi) !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.1 !important;
 }
 
-.resume-section h1 .text-primary {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* Gradient accent on name */
+.resume-section h1 .text-primary,
+h1.text-primary,
+.text-primary {
+  background: linear-gradient(135deg, var(--accent-a) 0%, var(--accent-b) 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
 }
 
-.resume-section h2 {
-  color: var(--text-hi) !important;
-  font-size: 1.65rem !important;
-  font-weight: 600 !important;
-  letter-spacing: -0.01em !important;
-}
-
+/* Headings */
+.resume-section h2,
 .resume-section h3 {
-  color: var(--text-hi) !important;
-  font-size: 1.08rem !important;
+  color: rgba(255,255,255,0.94) !important;
   font-weight: 600 !important;
+  letter-spacing: -0.02em !important;
+}
+
+.resume-section h2.mb-5 {
+  font-size: 1.65rem !important;
+  border-bottom: 1px solid rgba(255,255,255,0.09) !important;
+  padding-bottom: 0.75rem !important;
+  margin-bottom: 2rem !important;
 }
 
 .subheading {
-  color: rgba(79, 172, 254, 0.85) !important;
-  font-size: 0.82rem !important;
+  color: rgba(255,255,255,0.52) !important;
+  font-size: 0.92rem !important;
   font-weight: 500 !important;
-  letter-spacing: 0.09em !important;
+  letter-spacing: 0.06em !important;
   text-transform: uppercase !important;
 }
 
-/* ---- Body copy ---- */
 .resume-section p,
-.resume-section li,
-.resume-section ol li {
-  color: var(--text-mid) !important;
-  line-height: 1.78 !important;
-  font-weight: 400;
+.resume-section li {
+  color: rgba(255,255,255,0.76) !important;
+  line-height: 1.72 !important;
+  font-size: 0.97rem !important;
 }
 
-.resume-section .lead {
-  color: rgba(255, 255, 255, 0.82) !important;
-  font-size: 1.04rem !important;
-  font-weight: 400 !important;
-  line-height: 1.82 !important;
+/* ── Liquid Glass pill badges (skills, tags) ─────────────────── */
+.list-inline-item .badge,
+.list-inline-item,
+.badge {
+  background: rgba(255,255,255,0.08) !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+  color: rgba(255,255,255,0.88) !important;
+  border-radius: 100px !important;
+  padding: 5px 13px !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
 }
 
-/* ---- Links ---- */
-.resume-section a,
-.resume-section a:visited {
-  color: rgba(79, 172, 254, 0.88) !important;
-  text-decoration: none;
-  transition: color 0.2s ease;
+/* ── Liquid Glass button ────────────────────────────────────── */
+.btn-primary {
+  background: rgba(79,172,254,0.18) !important;
+  border: 1px solid rgba(79,172,254,0.45) !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(20px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+  border-radius: var(--r-md) !important;
+  font-weight: 600 !important;
+  padding: 10px 22px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow:
+    0 4px 20px rgba(79,172,254,0.20),
+    inset 0 1px 0 rgba(255,255,255,0.30) !important;
+  transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1) !important;
 }
-.resume-section a:hover {
-  color: var(--accent-2) !important;
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+.btn-primary:hover {
+  background: rgba(79,172,254,0.28) !important;
+  border-color: rgba(79,172,254,0.70) !important;
+  color: #ffffff !important;
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow:
+    0 8px 32px rgba(79,172,254,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.35) !important;
+}
+.btn-primary:active {
+  transform: translateY(0) scale(0.98) !important;
 }
 
-/* ---- Date / accent text ---- */
-.text-primary {
-  color: rgba(79, 172, 254, 0.82) !important;
-}
-.text-muted {
-  color: var(--text-lo) !important;
-}
-
-/* ---- Social icons ---- */
-.social-icons a.social-icon {
-  background: rgba(255, 255, 255, 0.07) !important;
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  color: rgba(255, 255, 255, 0.80) !important;
-  border-radius: 50% !important;
-  width: 44px !important;
-  height: 44px !important;
+/* ── Social icons — spring animation ───────────────────────── */
+.social-icons a {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  margin-right: 8px !important;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  text-decoration: none !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.07) !important;
+  border: 1px solid rgba(255,255,255,0.16) !important;
+  color: rgba(255,255,255,0.75) !important;
+  margin: 4px !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  transition:
+    transform 0.4s cubic-bezier(0.34,1.56,0.64,1),
+    background 0.25s ease,
+    color 0.25s ease,
+    box-shadow 0.25s ease !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18) !important;
 }
-.social-icons a.social-icon:hover {
-  background: rgba(79, 172, 254, 0.18) !important;
-  border-color: rgba(79, 172, 254, 0.45) !important;
-  color: #fff !important;
-  transform: translateY(-3px) scale(1.08);
-  box-shadow: 0 10px 24px rgba(79, 172, 254, 0.28);
-}
-
-/* ---- Download CV button ---- */
-.btn-primary {
-  background: linear-gradient(135deg, rgba(79,172,254,0.22), rgba(0,226,254,0.14)) !important;
-  border: 1px solid rgba(79, 172, 254, 0.38) !important;
-  color: #fff !important;
-  backdrop-filter: blur(12px);
-  border-radius: var(--radius-md) !important;
-  font-weight: 500 !important;
-  font-size: 0.88rem !important;
-  letter-spacing: 0.02em !important;
-  padding: 0.52rem 1.25rem !important;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-  box-shadow: 0 4px 18px rgba(79, 172, 254, 0.18);
-}
-.btn-primary:hover {
-  background: linear-gradient(135deg, rgba(79,172,254,0.38), rgba(0,226,254,0.25)) !important;
-  border-color: rgba(79, 172, 254, 0.65) !important;
-  color: #fff !important;
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 10px 30px rgba(79, 172, 254, 0.32);
+.social-icons a:hover {
+  transform: scale(1.18) translateY(-2px) !important;
+  background: rgba(79,172,254,0.20) !important;
+  border-color: rgba(79,172,254,0.50) !important;
+  color: #ffffff !important;
+  box-shadow:
+    0 6px 24px rgba(79,172,254,0.30),
+    inset 0 1px 0 rgba(255,255,255,0.28) !important;
 }
 
-/* ---- Icon lists (skills / awards) ---- */
-.fa-ul .fa-li i {
-  color: rgba(79, 172, 254, 0.75) !important;
+/* ── Timeline dots / border ─────────────────────────────────── */
+.resume-section .d-flex.flex-column.flex-md-row {
+  border-bottom: 1px solid rgba(255,255,255,0.07) !important;
+  padding-bottom: 1.8rem !important;
+  margin-bottom: 1.8rem !important;
 }
-.fa-ul li {
-  color: var(--text-mid) !important;
-  margin-bottom: 0.6rem;
-}
-
-/* trophies / certificates keep amber */
-.fa-trophy.text-warning,
-.fa-certificate.text-warning {
-  color: rgba(255, 205, 80, 0.85) !important;
+.resume-section .d-flex.flex-column.flex-md-row:last-child {
+  border-bottom: none !important;
 }
 
-/* dev skill icons */
-.list-inline.dev-icons .list-inline-item i {
-  color: rgba(255,255,255,0.55) !important;
-  transition: color 0.2s ease, transform 0.2s ease;
+/* Date badges */
+.text-muted {
+  color: rgba(255,255,255,0.42) !important;
 }
-.list-inline.dev-icons .list-inline-item i:hover {
-  color: var(--accent) !important;
-  transform: scale(1.15);
+.flex-shrink-0 span {
+  background: rgba(79,172,254,0.12) !important;
+  color: var(--accent-a) !important;
+  border: 1px solid rgba(79,172,254,0.25) !important;
+  border-radius: 100px !important;
+  padding: 3px 12px !important;
+  font-size: 0.84rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.01em !important;
+  white-space: nowrap !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
 }
 
-/* ---- Scrollbar ---- */
-::-webkit-scrollbar { width: 5px; }
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.25); }
+::-webkit-scrollbar-thumb {
+  background: rgba(79,172,254,0.25);
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(79,172,254,0.45);
+}
 
-/* ---- Mobile ---- */
+/* ── Mobile ─────────────────────────────────────────────────── */
 @media (max-width: 991.98px) {
   .resume-section {
-    margin: 0.75rem 0.75rem !important;
-    border-radius: var(--radius-md) !important;
+    margin: 1rem 0.75rem !important;
+    padding: 2rem 1.5rem !important;
+    border-radius: var(--r-lg) !important;
   }
   #sideNav {
     border-right: none !important;
-    border-bottom: 1px solid var(--glass-border) !important;
-  }
-  body {
-    background-attachment: scroll !important;
+    border-bottom: 1px solid rgba(255,255,255,0.12) !important;
   }
 }
